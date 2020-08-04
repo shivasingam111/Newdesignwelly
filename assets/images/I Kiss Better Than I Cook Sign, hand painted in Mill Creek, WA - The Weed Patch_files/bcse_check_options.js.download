@@ -1,0 +1,81 @@
+/*
++----------------------------------------------------------------------+
+| Checkbox Rado Mod                                           				 |
++----------------------------------------------------------------------+
+| Copyright (c) 2007-2009 BCSE LLC. dba BCS Engineering                |
++----------------------------------------------------------------------+
+|                                                                      |
+| Advanced Filter Mod is subject for version 2.0 of the BCSE           |
+| proprietary license. That license file can be found bundled with     |
+| this package in the file BCSE_LICENSE. A copy of this license can    |
+| also be found at                                                     |
+| http://www.bcsengineering.com/license/BCSE_LICENSE_2.0.txt           |
+|                                                                      |
++----------------------------------------------------------------------+
+*/
+
+
+modi_price = function(_price, _taxes, _orig_price) {
+	var return_price = round(_price, 2);
+
+	for (var x2 in modifiers) {
+		var value = getPOValue(x2,true);
+
+		for(var bcse_opt in value) {
+			if (!value[bcse_opt] || !modifiers[x2][value[bcse_opt]])
+				continue;
+
+			var elm = modifiers[x2][value[bcse_opt]];
+			return_price += parseFloat(elm[1] == '$' ? elm[0] : (_price*elm[0]/100));
+
+			for (var t2 in _taxes) {
+				if (elm[2][t2]) {
+				_taxes[t2] += parseFloat(elm[1] == '$' ? elm[2][t2] : (_orig_price*elm[2][t2]/100));
+				}
+			}
+		}
+	}
+
+	return [return_price, _taxes];
+}
+
+
+getPOValue = function(c,bcse_area) {
+	if (!document.getElementById('po'+c))
+		return false;
+		
+	if(typeof(bcse_area) == "undefined")
+		bcse_area = false;
+	
+	if(document.getElementById('po'+c).tagName.toUpperCase() == 'SELECT')
+		return bcse_area ? [ document.getElementById('po'+c).options[document.getElementById('po'+c).selectedIndex].value ] : document.getElementById('po'+c).options[document.getElementById('po'+c).selectedIndex].value ;
+		
+	if(document.getElementById('po'+c).tagName.toUpperCase() == 'DIV') {
+		var check_radio_opt = document.getElementById('po'+c).getElementsByTagName("INPUT");
+		
+		if(typeof(check_radio_opt) != undefined) {		
+			if(check_radio_opt[0].type.toUpperCase() == 'RADIO') {
+				for(var x = 0; x < check_radio_opt.length; x++) {
+					if(check_radio_opt[x].checked){
+						return  bcse_area ? [ check_radio_opt[x].value ] : check_radio_opt[x].value;
+					}
+				}
+			}
+			else if(check_radio_opt[0].type.toUpperCase() == 'CHECKBOX') {
+				var checkbox_value = [];
+				
+				for(var x = 0; x < check_radio_opt.length;x++) {				
+					if(check_radio_opt[x].checked) 
+						checkbox_value.push(check_radio_opt[x].value);
+				}
+
+				return checkbox_value;
+			}
+		}
+	}
+
+
+	return false;
+}
+
+
