@@ -67,39 +67,6 @@ class Database
         return false;
     }
 
-    public static function getSurvey($surveyId){
-        $survey = self::$dbcon->prepare("SELECT * FROM surveys WHERE id = ?");
-        $survey->execute([$surveyId]);
-        $survey = $survey->fetch();
-        return $survey;
-    }
-
-    public static function getCategoryName($categoryId){
-        $category = self::$dbcon->prepare("SELECT * FROM categories WHERE id = ?");
-        $category->execute([$categoryId]);
-        $category = $category->fetch();
-        return $category->name;
-    }
-
-    public static function getUserName($userId){
-        $user = self::$dbcon->prepare("SELECT * FROM users WHERE id = ?");
-        $user->execute([$userId]);
-        $user = $user->fetch();
-        return $user->fname . " " . $user->lname;
-    }
-
-    public static function getQuestions($surveyId){
-        $questions = self::$dbcon->prepare("SELECT * FROM questions WHERE survey_id = ?");
-        $questions->execute([$surveyId]);
-        $questions = $questions->fetchAll();
-        return $questions;
-    }
-
-    public static function insertAnswer($answer, $question_id, $user_id){
-        $newAnswer = self::$dbcon->prepare("INSERT INTO answers (answer, question_id, user_id) VALUES (?, ?, ?);");
-        $newAnswer->execute([$answer, $question_id, $user_id]);
-        return $newAnswer;
-    }
-
+    
 }
 ?>
